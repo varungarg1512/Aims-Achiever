@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aims Achiever Gaming Subscribe Arena</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<!-- YouTube Subscribe Button -->
+<script src="https://apis.google.com/js/platform.js"></script>
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Press Start 2P', cursive;
+        background: #000;
+        color: #00FFE7;
+        text-align: center;
+    }
+
+    h1 {
+        margin-top: 30px;
+        font-size: 20px;
+        text-shadow: 0 0 12px #00fff7;
+    }
+
+    .game-box {
+        margin: 30px auto;
+        width: 88%;
+        background: rgba(0, 255, 200, 0.1);
+        border: 3px solid #00FFC6;
+        padding: 25px;
+        border-radius: 15px;
+        backdrop-filter: blur(4px);
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 15px 18px;
+        background: #00FFC6;
+        color: #000;
+        border-radius: 10px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: 0.2s;
+        margin-top: 15px;
+    }
+    .btn:hover {
+        transform: scale(1.1);
+        background: #00d4a1;
+    }
+
+    /* Applauding Character */
+    .character {
+        width: 200px;
+        margin: 20px auto;
+        display: none;
+        animation: clap 0.6s infinite alternate;
+    }
+
+    @keyframes clap {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.1); }
+    }
+
+    /* Leaderboard Popup */
+    #leaderboardBox {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 80%;
+        transform: translate(-50%, -50%);
+        background: #012424;
+        padding: 20px;
+        border: 3px solid #00FFC6;
+        border-radius: 12px;
+        color: #00FFE7;
+        z-index: 999;
+    }
+
+    .close-btn {
+        background: red;
+        color: white;
+        margin-top: 15px;
+    }
+
+</style>
+</head>
+<body>
+
+<h1>🎮 GAMING SUBSCRIBE ARENA</h1>
+
+<div class="game-box">
+    <h2>Level: <span id="level">1</span></h2>
+    <h2>XP: <span id="xp">0</span> / 100</h2>
+    <h2>⭐ Score: <span id="score">0</span></h2>
+
+    <!-- YouTube Subscribe Widget -->
+    <div class="g-ytsubscribe" 
+         data-channelid="UCpHwXT-SNKuX3sI5OGucs5Q" 
+         data-layout="full" 
+         data-theme="dark"
+         data-count="default">
+    </div>
+
+    <button class="btn" onclick="subscribeReward()">I SUBSCRIBED — GET XP</button>
+
+    <!-- Character Animation Applause -->
+    <img src="https://i.ibb.co/xqfJ9Ks/clap-character.gif" class="character" id="character">
+
+    <hr style="margin: 30px 0; border-color:#00FFC6;">
+
+    <h3>🎯 Share to Earn XP</h3>
+    <input class="share" id="shareLink" 
+           style="width:80%; padding:10px; border:2px solid #00FFC6; border-radius:8px;"
+           readonly 
+           value="https://youtube.com/@aims.achiever_25com?si=A6sCdk-GFfyYzcoW">
+    <button class="btn" onclick="shareReward()">I SHARED — GET XP</button>
+
+    <hr style="margin: 30px 0; border-color:#00FFC6;">
+
+    <button class="btn" onclick="openLeaderboard()">🏆 View Leaderboard</button>
+</div>
+
+<!-- LEADERBOARD POPUP -->
+<div id="leaderboardBox">
+    <h2>🏆 Leaderboard</h2>
+    <div id="leaderboardContent"></div>
+    <button class="btn close-btn" onclick="closeLeaderboard()">Close</button>
+</div>
+
+<footer style="margin-top:40px; opacity:0.5;">
+    Made for Aims Achiever Gaming Fans 🚀
+</footer>
+
+<!-- SOUND EFFECTS -->
+<audio id="clickSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_f0b1f5bbd1.mp3?filename=game-click-124467.mp3"></audio>
+<audio id="levelUpSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6c063eae19.mp3?filename=level-up-191997.mp3"></audio>
+<audio id="applauseSound" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_399a097e68.mp3?filename=kids-cheering-6715.mp3"></audio>
+
+<script>
+
+let xp = 0;
+let level = 1;
+let score = 0;
+
+function playSound(id){
+    document.getElementById(id).play();
+}
+
+function updateUI(){
+    document.getElementById("xp").innerText = xp;
+    document.getElementById("level").innerText = level;
+    document.getElementById("score").innerText = score;
+}
+
+function subscribeReward(){
+    xp += 50;
+    score += 100;
+
+    playSound("clickSound");
+    showCharacterApplause();
+
+    checkLevelUp();
+}
+
+function shareReward(){
+    xp += 50;
+    score += 150;
+
+    playSound("clickSound");
+    checkLevelUp();
+}
+
+function showCharacterApplause(){
+    const char = document.getElementById("character");
+    char.style.display = "block";
+    playSound("applauseSound");
+
+    setTimeout(()=> char.style.display = "none", 2500);
+}
+
+function checkLevelUp(){
+    if(xp >= 100){
+        xp -= 100;
+        level++;
+        playSound("levelUpSound");
+        alert("🎉 LEVEL UP! You're now Level " + level);
+
+        saveScoreToLeaderboard();
+    }
+    updateUI();
+}
+
+
+/* LEADERBOARD SYSTEM */
+function saveScoreToLeaderboard(){
+    let board = JSON.parse(localStorage.getItem("aimsLeaderboard") || "[]");
+
+    board.push({
+        score: score,
+        level: level,
+        time: new Date().toLocaleString()
+    });
+
+    board.sort((a,b)=> b.score - a.score);
+
+    if(board.length > 10) board.length = 10;
+
+    localStorage.setItem("aimsLeaderboard", JSON.stringify(board));
+}
+
+function openLeaderboard(){
+    let board = JSON.parse(localStorage.getItem("aimsLeaderboard") || "[]");
+
+    let html = "<ol>";
+    board.forEach(item=>{
+        html += `<li>Score: ${item.score} | Level: ${item.level} | (${item.time})</li>`;
+    });
+    html += "</ol>";
+
+    document.getElementById("leaderboardContent").innerHTML = html;
+    document.getElementById("leaderboardBox").style.display = "block";
+}
+
+function closeLeaderboard(){
+    document.getElementById("leaderboardBox").style.display = "none";
+}
+
+updateUI();
+</script>
+
+</body>
+</html>
